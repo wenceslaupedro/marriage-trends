@@ -21,9 +21,23 @@
         <h1 class="logo-text">Weekly Marriage Trends</h1>
         <p>Sign up to receive the latest marriage trends, statistics, and insights delivered to your inbox every week.</p>
         
-        <div class="ml-embedded" data-form="Yjelqx"></div>
+        <form action="https://app.mailerlite.com/webforms/submit/yjelqx" 
+              data-code="yjelqx" 
+              method="post" 
+              target="_blank">
+            <div class="name-group">
+                <input type="text" name="fields[name]" placeholder="First Name" required>
+                <input type="text" name="fields[last_name]" placeholder="Last Name" required>
+            </div>
+            <div class="input-group">
+                <input type="email" name="fields[email]" placeholder="Your email address" required>
+                <button type="submit" class="button">Subscribe</button>
+            </div>
+            <p class="privacy-note">No spam, ever. We'll never share your email address and you can opt out at any time.</p>
+        </form>
         
-        <p class="privacy-note">No spam, ever. We'll never share your email address and you can opt out at any time.</p>
+        <p class="success" id="successMessage" style="display: none;">Thank you for subscribing! Check your email for confirmation.</p>
+        <p class="error" id="errorMessage" style="display: none;">There was an error processing your subscription. Please try again.</p>
     </div>
 
     <footer class="footer">
