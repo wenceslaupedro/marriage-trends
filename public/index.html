@@ -3,26 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weekly Marriage Trends</title>
+    <title></title>
     <link rel="stylesheet" href="styles.css">
-    <!-- MailerLite Form -->
-    <script src="https://static.mailerlite.com/js/w/webforms.min.js?v0c75f831a0e2a5e3c8d644a1c2edfdf4" type="text/javascript"></script>
 </head>
 <body>
     <div class="container">
         <img src="./marriage-logo.svg" alt="Marriage Trends Logo" class="logo" />
-        <h1 class="logo-text">Weekly Marriage Trends</h1>
         <p>Sign up to receive the latest marriage trends, statistics, and insights delivered to your inbox every week.</p>
         
-        <!-- MailerLite Form -->
-        <div class="ml-embedded" data-form="Yjelqx"></div>
-
-        <p class="privacy-note">No spam, ever. We'll never share your email address and you can opt out at any time.</p>
+        <form id="signupForm">
+            <div class="name-group">
+                <input type="text" id="firstName" placeholder="First Name" required>
+                <input type="text" id="lastName" placeholder="Last Name" required>
+            </div>
+            <div class="input-group">
+                <input type="email" id="email" placeholder="Your email address" required>
+                <button type="submit" id="subscribeButton">Subscribe</button>
+            </div>
+            <p class="privacy-note">No spam, ever. We'll never share your email address and you can opt out at any time.</p>
+        </form>
+        
+        <p class="success" id="successMessage">Thank you for subscribing! Check your email for confirmation.</p>
+        <p class="error" id="errorMessage" style="display: none;">There was an error processing your subscription. Please try again.</p>
     </div>
 
-    <footer class="footer">
-        <p>© 2024 Weekly Marriage Trends. All rights reserved.</p>
-        <p><a href="https://app.mailerlite.com/unsubscribe" target="_blank" rel="noopener noreferrer">Unsubscribe</a> from our newsletter at any time.</p>
-    </footer>
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const button = document.getElementById('subscribeButton');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Show loading state
+            button.textContent = 'Subscribing...';
+            button.disabled = true;
+
+            try {
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        firstName,
+                        lastName
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Subscription failed');
+                }
+
+                // Show success message
+                successMessage.style.display = 'block';
+                errorMessage.style.display = 'none';
+                document.getElementById('signupForm').reset();
+
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+            } finally {
+                // Reset button state
+                button.textContent = 'Subscribe';
+                button.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>
