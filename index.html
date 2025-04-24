@@ -12,8 +12,8 @@
         <h1 class="logo-text">Weekly Marriage Trends</h1>
         <p>Sign up to receive the latest marriage trends, statistics, and insights delivered to your inbox every week.</p>
         
-        <!-- Direct MailerLite Form -->
-        <form action="https://app.mailerlite.com/webforms/submit/Yjelqx" method="POST" target="_blank">
+        <!-- MailerLite Form -->
+        <form action="https://app.mailerlite.com/webforms/submit/Yjelqx" method="POST">
             <div class="name-group">
                 <input type="text" name="fields[name]" placeholder="First Name" required>
                 <input type="text" name="fields[last_name]" placeholder="Last Name" required>
@@ -24,43 +24,11 @@
             </div>
             <p class="privacy-note">No spam, ever. We'll never share your email address and you can opt out at any time.</p>
         </form>
-
-        <p class="success" id="successMessage" style="display: none;">Thank you for subscribing! Check your email for confirmation.</p>
-        <p class="error" id="errorMessage" style="display: none;">There was an error processing your subscription. Please try again.</p>
     </div>
 
     <footer class="footer">
         <p>© 2024 Weekly Marriage Trends. All rights reserved.</p>
         <p><a href="https://app.mailerlite.com/unsubscribe" target="_blank" rel="noopener noreferrer">Unsubscribe</a> from our newsletter at any time.</p>
     </footer>
-
-    <script>
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const form = this;
-            const successMessage = document.getElementById('successMessage');
-            const errorMessage = document.getElementById('errorMessage');
-
-            // Submit the form
-            fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form)
-            })
-            .then(response => {
-                if (response.ok) {
-                    successMessage.style.display = 'block';
-                    errorMessage.style.display = 'none';
-                    form.reset();
-                } else {
-                    throw new Error('Subscription failed');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                errorMessage.style.display = 'block';
-                successMessage.style.display = 'none';
-            });
-        });
-    </script>
 </body>
 </html>
