@@ -196,4 +196,39 @@ button:disabled {
     button {
         width: 100%;
     }
+}
+
+.footer {
+    text-align: center;
+    padding: 15px;
+    margin-top: 40px;
+    width: 100%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.footer p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.75rem;
+}
+
+.footer a:hover {
+    text-decoration: underline;
 } 
