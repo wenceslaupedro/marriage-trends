@@ -1,69 +1,90 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const MailerLite = require('@mailerlite/mailerlite-nodejs').default;
 const path = require('path');
+const fetch = require('node-fetch');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Initialize MailerLite
-const mailerlite = new MailerLite({
-    api_key: process.env.MAILERLITE_API_KEY
+// MongoDB Schema
+const subscriberSchema = new mongoose.Schema({
+  firstName: String,
+  lastName: String,
+  email: String,
+  createdAt: { type: Date, default: Date.now }
 });
+
+const Subscriber = mongoose.model('Subscriber', subscriberSchema);
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
 app.post('/api/subscribe', async (req, res) => {
-    try {
-        const { email, firstName, lastName } = req.body;
-        
-        const params = {
-            email: email,
-            fields: {
-                name: firstName,
-                last_name: lastName
-            },
-            groups: [process.env.MAILERLITE_GROUP_ID]
-        };
+  try {
+    const { firstName, lastName, email } = req.body;
 
-        const response = await mailerlite.subscribers.createOrUpdate(params);
+    // Save to MongoDB
+    const subscriber = new Subscriber({ firstName, lastName, email });
+    await subscriber.save();
 
-        res.json({ success: true, message: 'Subscription successful' });
-    } catch (error) {
-        console.error('Subscription error:', error);
-        res.status(500).json({ success: false, message: 'Subscription failed' });
+    // Add to MailerLite
+    const mlResponse = await fetch('https://api.mailerlite.com/api/v2/subscribers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-MailerLite-ApiKey': process.env.MAILERLITE_API_KEY
+      },
+      body: JSON.stringify({
+        email: email,
+        fields: {
+          name: firstName,
+          last_name: lastName
+        }
+      })
+    });
+
+    if (!mlResponse.ok) {
+      const errorData = await mlResponse.json();
+      console.error('MailerLite API Error:', errorData);
+      throw new Error(`MailerLite API error: ${errorData.message || 'Unknown error'}`);
     }
+
+    res.json({ success: true, message: 'Successfully subscribed!' });
+  } catch (error) {
+    console.error('Subscription error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
-app.get('/api/newsletters', async (req, res) => {
-    try {
-        // This would fetch your newsletter content from a database
-        const newsletters = [
-            {
-                id: 1,
-                title: "Latest Marriage Trends",
-                date: "2024-03-20",
-                content: "Your newsletter content here..."
-            }
-            // Add more newsletters as needed
-        ];
-        res.json(newsletters);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch newsletters' });
-    }
+app.get('/api/subscribers', async (req, res) => {
+  try {
+    const subscribers = await Subscriber.find().sort({ createdAt: -1 });
+    res.json(subscribers);
+  } catch (error) {
+    console.error('Error fetching subscribers:', error);
+    res.status(500).json({ error: 'Failed to fetch subscribers' });
+  }
 });
 
 // Serve index.html for all other routes
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-}); 
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

@@ -196,4 +196,22 @@ button:disabled {
     button {
         width: 100%;
     }
+}
+
+.footer {
+    text-align: center;
+    padding: 2rem;
+    margin-top: 2rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--gray-medium);
+}
+
+.footer a {
+    color: var(--primary-blue);
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
 } 
