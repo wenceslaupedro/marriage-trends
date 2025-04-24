@@ -22,7 +22,17 @@
         <p>Sign up to receive the latest marriage trends, statistics, and insights delivered to your inbox every week.</p>
         
         <!-- MailerLite Form -->
-        <div class="ml-embedded" data-form="Yjelqx"></div>
+        <form id="subscriptionForm" action="https://app.mailerlite.com/webforms/submit/Yjelqx" method="POST">
+            <div class="name-group">
+                <input type="text" name="fields[name]" id="firstName" placeholder="First Name" required>
+                <input type="text" name="fields[last_name]" id="lastName" placeholder="Last Name" required>
+            </div>
+            <div class="input-group">
+                <input type="email" name="fields[email]" id="email" placeholder="Your email address" required>
+                <button type="submit">Subscribe</button>
+            </div>
+            <p class="privacy-note">No spam, ever. We'll never share your email address and you can opt out at any time.</p>
+        </form>
     </div>
 
     <footer class="footer">
